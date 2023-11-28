@@ -1,4 +1,4 @@
-# Install script for directory: E:/Source/Git/WindowsClient
+# Install script for directory: D:/Document/西大/3-2023fall/cs3307/WindowsClient
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "E:/Source/Git/WindowsClient/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "D:/Document/西大/3-2023fall/cs3307/WindowsClient/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

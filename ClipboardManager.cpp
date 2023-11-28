@@ -16,6 +16,7 @@ std::wstring ClipboardContent::getTextData() const {
     return textContent;
 }
 
+
 const std::vector<unsigned char>& ClipboardContent::getBinaryData() const {
     return binaryContent;
 }
