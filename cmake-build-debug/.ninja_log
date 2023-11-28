@@ -1,0 +1,8 @@
+# ninja log v5
+5	2720	7228414952126557	CMakeFiles/WindowsClientTest1.dir/main.cpp.obj	41cdec841231abc5
+1	120	7228426353712127	build.ninja	a2eea9e7b8276056
+4	3172	7228412958026744	CMakeFiles/WindowsClientTest1.dir/ClipboardManager.cpp.obj	e9b62b1477193d96
+2721	2942	7228414954295850	WindowsClientTest1.exe	f00f9ab5e397e1a9
+14	3936	7228426442170520	CMakeFiles/WindowsClientTest1.dir/main.cpp.obj	785af83f996b3a29
+7	4041	7228426443215766	CMakeFiles/WindowsClientTest1.dir/ClipboardManager.cpp.obj	909bee0a9b80dc93
+4041	4274	7228426445544252	WindowsClientTest1.exe	f00f9ab5e397e1a9
