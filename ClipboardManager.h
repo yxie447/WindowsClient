@@ -44,6 +44,7 @@ private:
 // Declaration of ClipboardManager class
 class ClipboardManager {
 public:
+    static void PushStringToClipboard(const std::string& str);
     static bool HasClipboardChanged();
     static std::string GetCurrentTimeAsString();
     static HWND GetClipboardWindowHandle();

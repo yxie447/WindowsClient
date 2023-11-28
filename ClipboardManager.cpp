@@ -16,7 +16,6 @@ std::wstring ClipboardContent::getTextData() const {
     return textContent;
 }
 
-
 const std::vector<unsigned char>& ClipboardContent::getBinaryData() const {
     return binaryContent;
 }
@@ -142,5 +141,28 @@ ClipboardContent ClipboardManager::GetClipboardContent(HWND hWindow) {
 
         default:
             return ClipboardContent(ClipboardDataType::Unknown, L"", std::vector<unsigned char>());
+    }
+}
+
+void ClipboardManager::PushStringToClipboard(const std::string& str) {
+    if (OpenClipboard(NULL)) {
+        EmptyClipboard(); // Clear the clipboard
+
+        // Allocate a global memory object for the text
+        HGLOBAL hglbCopy = GlobalAlloc(GMEM_MOVEABLE, (str.size() + 1) * sizeof(char));
+        if (hglbCopy == NULL) {
+            CloseClipboard();
+            return;
+        }
+
+        // Lock the handle and copy the text to the buffer
+        char* lptstrCopy = (char*)GlobalLock(hglbCopy);
+        memcpy(lptstrCopy, str.c_str(), str.size() + 1);
+        GlobalUnlock(hglbCopy);
+
+        // Place the handle on the clipboard
+        SetClipboardData(CF_TEXT, hglbCopy);
+
+        CloseClipboard(); // Close the clipboard
     }
 }

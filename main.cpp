@@ -8,8 +8,10 @@
 
 int main() {
     HWND hWindow = ClipboardManager::GetClipboardWindowHandle();
+    std::string myText = "Hello, Clipboard!";
+    ClipboardManager::PushStringToClipboard(myText);
 
-    while (true) {
+    /*while (true) {
         if (ClipboardManager::HasClipboardChanged()) {
             std::string updateTime = ClipboardManager::GetLastUpdateTime();
             std::cout << "Clipboard content was last updated at: " << updateTime << std::endl;
@@ -33,7 +35,8 @@ int main() {
             }
         }
         std::this_thread::sleep_for(std::chrono::seconds(1)); // Delay to prevent excessive CPU usage
-    }
+
+    }*/
 
     return 0;
 }
