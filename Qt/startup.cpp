@@ -87,7 +87,7 @@ void startup::processSignUp()
         // if match continue with the sign-up
         // put logic in here
         // compare password and username with db etc..
-        // then call processSignUp(); to load into the Wt app
+      
         close();
         webView.load(QUrl("http://0.0.0.0:8080/"));
         webView.resize(1024, 750);
