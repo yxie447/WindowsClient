@@ -6,18 +6,12 @@
 
 const std::string NetworkConnection::IP = "http://10.0.0.48:49162"; // http://0.0.0.0:18080
 
-// TODO: Take in JSON
-void NetworkConnection::postData(const std::string &content) {
-    nlohmann::json json_data = {
-            {"username", "jboerse2"},
-            {"content",  content}
-    };
-
+void NetworkConnection::postData(const std::string &url, const nlohmann::json &jsonData) {
     httplib::Headers headers = {
             {"Content-Type", "application/json"}
     };
 
-    auto postRes = client->Post("/api/clipboard/send", headers, json_data.dump(), "application/json");
+    auto postRes = client->Post(url, headers, jsonData.dump(), "application/json");
 
     std::cout << std::endl << "POST: " << std::endl;
 
@@ -25,17 +19,16 @@ void NetworkConnection::postData(const std::string &content) {
     std::cout << "Body: " << postRes->body << std::endl;
 }
 
-// TODO: Return with JSON data
-std::string NetworkConnection::getData() {
-    // ------ GET METHOD ------
-    auto getRes = client->Get("/api/clipboard/receive");
+nlohmann::json NetworkConnection::getData(const std::string &url) {
+    auto getRes = client->Get(url);
 
-    std::cout << "GET: " << std::endl << std::endl;
+    // Parse the JSON text into a nlohmann::json object
+    nlohmann::json jsonData = nlohmann::json::parse(getRes->body);
 
-    std::cout << "Response: " << getRes << std::endl << std::endl;
+    nlohmann::json responseData = {
+            {"status", getRes->status},
+            {"body", jsonData}
+    };
 
-    std::cout << "Status: " << getRes->status << std::endl;
-    std::cout << "Body: " << getRes->body << std::endl;
-
-    return ""; // TODO: Return data
+    return responseData;
 }

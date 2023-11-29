@@ -21,8 +21,8 @@ public:
         client = new httplib::Client(IP);
     }
 
-    void postData(const std::string &content);
-    std::string getData();
+    void postData(const std::string &url, const nlohmann::json &jsonData);
+    nlohmann::json getData(const std::string &url);
 };
 
 
