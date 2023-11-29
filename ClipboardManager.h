@@ -1,6 +1,11 @@
-//
-// Created by yxie447 on 2023/11/27.
-//
+/**
+ * @file ClipboardManager.h
+ * @brief Header file for the ClipboardManager class.
+ *
+ *
+ * @author Yaopeng Xie
+ * @date 2023/11/14
+ */
 
 #ifndef CLIPBOARDMANAGER_H
 #define CLIPBOARDMANAGER_H

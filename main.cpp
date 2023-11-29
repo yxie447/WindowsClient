@@ -1,5 +1,5 @@
 //
-// Created by yxie447 on 2023/11/27.
+// Created by Yaopeng Xie on 2023/11/14.
 //
 
 #include "ClipboardManager.h"
