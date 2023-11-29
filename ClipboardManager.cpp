@@ -1,44 +1,4 @@
 #include "ClipboardManager.h"
-#include <iostream>
-#include <iomanip>
-
-// Implement the ClipboardContent class methods
-ClipboardContent::ClipboardContent(ClipboardDataType type, const std::wstring& textData,
-                                   const std::vector<unsigned char>& binaryData, const std::string& updateTime)
-        : dataType(type), textContent(textData), binaryContent(binaryData), updateTime(updateTime) {}
-
-
-ClipboardDataType ClipboardContent::getDataType() const {
-    return dataType;
-}
-
-std::wstring ClipboardContent::getTextData() const {
-    return textContent;
-}
-
-const std::vector<unsigned char>& ClipboardContent::getBinaryData() const {
-    return binaryContent;
-}
-
-void ClipboardContent::setDataType(ClipboardDataType type) {
-    dataType = type;
-}
-
-void ClipboardContent::setTextData(const std::wstring& text) {
-    textContent = text;
-}
-
-void ClipboardContent::setBinaryData(const std::vector<unsigned char>& binaryData) {
-    this->binaryContent = binaryData;
-}
-
-std::string ClipboardContent::getUpdateTime() const {
-    return updateTime;
-}
-
-void ClipboardContent::setUpdateTime(const std::string& updateTime) {
-    this->updateTime = updateTime;
-}
 
 // Initialize the static member of ClipboardManager
 DWORD ClipboardManager::lastClipboardSequenceNumber = GetClipboardSequenceNumber();
@@ -48,7 +8,8 @@ std::string ClipboardManager::lastUpdateTime = "";
 // Implement the ClipboardManager class methods
 bool ClipboardManager::HasClipboardChanged() {
     DWORD currentSequenceNumber = GetClipboardSequenceNumber();
-    std::cout << "Current Seq Num: " << currentSequenceNumber << ", Last Seq Num: " << lastClipboardSequenceNumber << std::endl; // Debug print
+    std::cout << "Current Seq Num: " << currentSequenceNumber << ", Last Seq Num: " << lastClipboardSequenceNumber
+              << std::endl; // Debug print
 
     if (currentSequenceNumber != lastClipboardSequenceNumber) {
         lastClipboardSequenceNumber = currentSequenceNumber;
@@ -109,7 +70,7 @@ std::wstring ClipboardManager::GetClipboardText(HWND hWindow) {
     if (OpenClipboard(hWindow)) {
         HANDLE hData = GetClipboardData(CF_UNICODETEXT);
         if (hData != NULL) {
-            wchar_t *pszText = static_cast<wchar_t*>(GlobalLock(hData));
+            wchar_t *pszText = static_cast<wchar_t *>(GlobalLock(hData));
             if (pszText != NULL) {
                 std::wstring text(pszText);
                 GlobalUnlock(hData);
@@ -126,8 +87,7 @@ ClipboardContent ClipboardManager::GetClipboardContent(HWND hWindow) {
     UINT format = GetClipboardFormat();
 
     switch (format) {
-        case CF_UNICODETEXT:
-        {
+        case CF_UNICODETEXT: {
             std::wstring textData = GetClipboardText(hWindow);
             return ClipboardContent(ClipboardDataType::Text, textData, std::vector<unsigned char>());
         }
@@ -144,7 +104,7 @@ ClipboardContent ClipboardManager::GetClipboardContent(HWND hWindow) {
     }
 }
 
-void ClipboardManager::PushStringToClipboard(const std::string& str) {
+void ClipboardManager::PushStringToClipboard(const std::string &str) {
     if (OpenClipboard(NULL)) {
         EmptyClipboard(); // Clear the clipboard
 
@@ -156,7 +116,7 @@ void ClipboardManager::PushStringToClipboard(const std::string& str) {
         }
 
         // Lock the handle and copy the text to the buffer
-        char* lptstrCopy = (char*)GlobalLock(hglbCopy);
+        char *lptstrCopy = (char *) GlobalLock(hglbCopy);
         memcpy(lptstrCopy, str.c_str(), str.size() + 1);
         GlobalUnlock(hglbCopy);
 
@@ -165,4 +125,14 @@ void ClipboardManager::PushStringToClipboard(const std::string& str) {
 
         CloseClipboard(); // Close the clipboard
     }
+}
+
+std::string ClipboardManager::convertToUtf8(const std::wstring &unicodeText) {
+    // If you need to convert it to a narrow character string (char array), you can use WideCharToMultiByte
+    int bufferSize = WideCharToMultiByte(CP_UTF8, 0, unicodeText.c_str(), -1, NULL, 0, NULL, NULL);
+    std::string narrowText(bufferSize, 0);
+    WideCharToMultiByte(CP_UTF8, 0, unicodeText.c_str(), -1, &narrowText[0], bufferSize, NULL, NULL);
+
+    // 'narrowText' now contains the UTF-8 encoded string
+    return narrowText;
 }
