@@ -1,2 +1,4 @@
 /.idea
 /cmake-build-debug/
+/Qt/.idea
+/Qt/cmake-build-debug
