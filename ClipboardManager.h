@@ -21,6 +21,9 @@
  * This class provides static methods to interact with the system clipboard, including reading and writing content.
  */
 class ClipboardManager {
+private:
+    static DWORD lastClipboardSequenceNumber; ///< Last known clipboard sequence number
+
 public:
     static std::string lastUpdateTime; ///< Last update time of the clipboard content
 
@@ -105,19 +108,6 @@ public:
 
 
     static std::string convertToUtf8(const std::wstring &unicodeText);
-
-private:
-    static DWORD lastClipboardSequenceNumber; ///< Last known clipboard sequence number
-
-    /**
-     * @brief Sets the data type of the clipboard content.
-     *
-     * This private method is used to set the type of data currently stored in the clipboard.
-     * It is utilized internally to manage and categorize clipboard data based on its type, such as text, image, or file.
-     *
-     * @param type The type of the clipboard data, as defined in the ClipboardDataType enum.
-     */
-    void setDataType(ClipboardDataType type);
 };
 
 #endif // CLIPBOARDMANAGER_H

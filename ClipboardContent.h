@@ -35,6 +35,12 @@ enum class ClipboardDataType {
  * This class is used to store clipboard data along with its type. It also stores the time when the data was updated.
  */
 class ClipboardContent {
+private:
+    ClipboardDataType dataType; ///< Data type of the clipboard content
+    std::wstring textContent; ///< Text data content
+    std::vector<unsigned char> binaryContent; ///< Binary data content (images, files)
+    std::string updateTime; ///< Time when the clipboard content was updated
+
 public:
     /**
      * @brief Constructs a ClipboardContent object with given parameters.
@@ -48,6 +54,15 @@ public:
 
     // Getters and setters
     ClipboardDataType getDataType() const;
+
+    /**
+     * @brief Sets the data type of the clipboard content.
+     *
+     * This private method is used to set the type of data currently stored in the clipboard.
+     * It is utilized internally to manage and categorize clipboard data based on its type, such as text, image, or file.
+     *
+     * @param type The type of the clipboard data, as defined in the ClipboardDataType enum.
+     */
     void setDataType(ClipboardDataType type);
     std::wstring getTextData() const;
     void setTextData(const std::wstring& text);
@@ -55,12 +70,6 @@ public:
     void setBinaryData(const std::vector<unsigned char>& binaryData);
     std::string getUpdateTime() const;
     void setUpdateTime(const std::string& updateTime);
-
-private:
-    ClipboardDataType dataType; ///< Data type of the clipboard content
-    std::wstring textContent; ///< Text data content
-    std::vector<unsigned char> binaryContent; ///< Binary data content (images, files)
-    std::string updateTime; ///< Time when the clipboard content was updated
 };
 
 

@@ -27,8 +27,7 @@ std::string ClipboardManager::lastUpdateTime = "";
  */
 bool ClipboardManager::HasClipboardChanged() {
     DWORD currentSequenceNumber = GetClipboardSequenceNumber();
-    std::cout << "Current Seq Num: " << currentSequenceNumber << ", Last Seq Num: " << lastClipboardSequenceNumber
-              << std::endl; // Debug print
+    // std::cout << "Current Seq Num: " << currentSequenceNumber << ", Last Seq Num: " << lastClipboardSequenceNumber << std::endl; // TODO: Keep debug print?
 
     if (currentSequenceNumber != lastClipboardSequenceNumber) {
         lastClipboardSequenceNumber = currentSequenceNumber;
