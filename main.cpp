@@ -14,6 +14,11 @@ int main() {
     auto *conn = new NetworkConnection();
 
     while (true) {
+        // std::string contents = conn->getData();
+        conn->getData();
+
+        // std::cout << contents << std::endl;
+
         if (ClipboardManager::HasClipboardChanged()) {
             std::string updateTime = ClipboardManager::GetLastUpdateTime();
             std::cout << "Clipboard content was last updated at: " << updateTime << std::endl;

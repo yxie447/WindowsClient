@@ -5,8 +5,9 @@
 #ifndef WINDOWSCLIENTTEST1_NETWORKCONNECTION_H
 #define WINDOWSCLIENTTEST1_NETWORKCONNECTION_H
 
-#include "httplib.h"
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include "httplib.h"
 #include <nlohmann/json.hpp>
 
 class NetworkConnection {
@@ -21,6 +22,7 @@ public:
     }
 
     void postData(const std::string &content);
+    std::string getData();
 };
 
 
