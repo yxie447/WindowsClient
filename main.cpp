@@ -12,25 +12,27 @@ bool containsSpecialCharacters(const std::string &str);
 
 void removeNullCharacter(std::string &str);
 
-void updateClipboard(HWND hWindow, NetworkConnection *conn);
+void updateClipboard(HWND hWindow, NetworkConnection *conn, const std::string &username);
 
-void backgroundClipboardUpdater(const std::string &username, const int &deviceID);
+void backgroundClipboardUpdater(const std::string &username, const std::string &deviceID);
 
 int main() {
-    std::string username = "admin";
-    int deviceID = 1;
+    std::string username = "Benz"; // admin
+    std::string deviceID = "1";
 
-//    std::thread thread_obj(backgroundClipboardUpdater, username);
+    std::thread thread_obj(backgroundClipboardUpdater, username, deviceID);
 
-    backgroundClipboardUpdater(username, deviceID);
+    // TODO: Add Qt code start here
+
+//    backgroundClipboardUpdater(username, deviceID);
 
     // Wait for the thread to finish
-    // thread_obj.join();
+    thread_obj.join();
 
     return 0;
 }
 
-void backgroundClipboardUpdater(const std::string &username, const int &deviceID) {
+void backgroundClipboardUpdater(const std::string &username, const std::string &deviceID) {
     HWND hWindow = ClipboardManager::GetClipboardWindowHandle();
 
     auto *conn = new NetworkConnection();
@@ -41,6 +43,7 @@ void backgroundClipboardUpdater(const std::string &username, const int &deviceID
     };
 
     while (true) {
+        // Send the local clipboard to the server if it changed
         if (ClipboardManager::HasClipboardChanged()) { // TODO: Also compare with the server contents
             std::string updateTime = ClipboardManager::GetLastUpdateTime();
             std::cout << "Clipboard content was last updated at: " << updateTime << std::endl;
@@ -50,14 +53,21 @@ void backgroundClipboardUpdater(const std::string &username, const int &deviceID
 
             jsonData["lastUpdatedTime"] = ClipboardManager::GetLastUpdateTime();
 
+            std::string localClipboardConverted;
+
             switch (content.getDataType()) {
                 case ClipboardDataType::Text:
                     std::wcout << L"Clipboard data type: text" << std::endl;
                     std::wcout << L"Content: " << content.getTextData() << std::endl;
 
-                    jsonData["content"] = ClipboardManager::convertToUtf8(content.getTextData());
+                    localClipboardConverted = ClipboardManager::convertToUtf8(content.getTextData());
+                    removeNullCharacter(localClipboardConverted);
 
-                    conn->postData("/api/clipboard/send", jsonData);
+                    if (!localClipboardConverted.empty()) {
+                        jsonData["content"] = localClipboardConverted;
+
+                        conn->postData("/api/clipboard/send", jsonData);
+                    }
 
                     break;
                 case ClipboardDataType::Image:
@@ -74,18 +84,26 @@ void backgroundClipboardUpdater(const std::string &username, const int &deviceID
 
         // Important: The clipboard must only be updated from the server after the local contents have been pushed
         // Note: This may be possible to change by doing a check with the server clipboard contents
-        updateClipboard(hWindow, conn);
+        updateClipboard(hWindow, conn, username);
 
         std::this_thread::sleep_for(std::chrono::seconds(1)); // Delay to prevent excessive CPU usage
     }
 }
 
-void updateClipboard(HWND hWindow, NetworkConnection *conn) {
-    nlohmann::json serverResponse = conn->getData("/api/clipboard/receive");
+// Updates the local clipbaord
+void updateClipboard(HWND hWindow, NetworkConnection *conn, const std::string &username) {
+    nlohmann::json serverResponse = conn->getData(
+            "/api/clipboard/receive?username=" + username); // TODO: Need to escape?
 
     // Return if the server has no connection
-    if (serverResponse["status"] == 504) {
-        std::cout << "GET: Unable to reach server " << std::endl;
+    if (serverResponse["status"] != 200) {
+        if (serverResponse["status"] == 504) {
+            std::cout << "GET: Unable to reach server " << std::endl;
+        } else {
+            std::cout << "Status: " << serverResponse["status"] << std::endl;
+            std::cout << "Body: " << serverResponse["body"] << std::endl;
+        }
+
         return;
     }
 
@@ -96,11 +114,15 @@ void updateClipboard(HWND hWindow, NetworkConnection *conn) {
 
         removeNullCharacter(localClipboardConverted);
 
-        std::string serverClipboard = serverResponse.at("body").at("content");
+        if (serverResponse.at("body").contains("content")) {
+            std::string serverClipboard = serverResponse.at("body").at("content");
 
-        if (localClipboardConverted != serverClipboard) {
-            std::cout << "Updating local clipboard: " << serverClipboard << std::endl;
-            ClipboardManager::PushStringToClipboard(serverClipboard);
+            if (localClipboardConverted != serverClipboard) {
+                std::cout << "Updating local clipboard: " << serverClipboard << std::endl;
+                ClipboardManager::PushStringToClipboard(serverClipboard);
+            }
+        } else {
+            std::cout << "Unable to update local clipboard as the response is missing \"content\"" << std::endl;
         }
     }
 }
