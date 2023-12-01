@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <thread>
+#include <shellapi.h>
 
 bool containsSpecialCharacters(const std::string &str);
 
@@ -19,6 +20,8 @@ void backgroundClipboardUpdater(const std::string &username, const std::string &
 int main() {
     std::string username = "Benz"; // admin
     std::string deviceID = "1";
+
+    ShellExecute(0, "open", "http://10.0.0.48:8080", NULL, NULL, SW_SHOWNORMAL);
 
     std::thread thread_obj(backgroundClipboardUpdater, username, deviceID);
 
