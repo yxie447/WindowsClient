@@ -6,7 +6,11 @@ SET(MY_PROJECT_NAME WindowsClientTest)
 project(${MY_PROJECT_NAME})
 
 # Set the C++ version
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
+
 
 # Set the path to for the local software installation
 set(LOCAL_SOFTWARE_DIR /usr/local)

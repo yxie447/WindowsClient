@@ -1,13 +1,10 @@
-//
-// Created by Yaopeng Xie on 2023/11/14.
-//
-
 #include "ClipboardManager.h"
 #include "NetworkConnection.h"
 
 #include <iostream>
 #include <thread>
 #include <shellapi.h>
+#include <regex>
 
 bool containsSpecialCharacters(const std::string &str);
 
@@ -20,10 +17,34 @@ void backgroundClipboardUpdater(const std::string &username, const std::string &
 std::string getClipboardFromSever(NetworkConnection *conn, const std::string &username);
 
 int main() {
+    std::string serverIPAddress = "";
+
+    bool flag = true;
+
+    while (flag){
+        std::cout << "Please Input Server IP(ipv4) Address:" << std::endl;
+        std::cin >> serverIPAddress;
+
+        if (std::regex_match(serverIPAddress, std::regex("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"))){
+            flag = false;
+        } else {
+            std::cout << "Please Input a Valid IP(ipv4) Address." << std::endl;
+        }
+    }
+
+    std::string apiServerIPAddress = serverIPAddress;
+
+    serverIPAddress = "http://" + serverIPAddress + ":8080";
+
+    apiServerIPAddress = "http://" + apiServerIPAddress + ":4800";
+
+    NetworkConnection::setIP(apiServerIPAddress);
+
+
     std::string username = "Benz"; // admin
     std::string deviceID = "1";
 
-    ShellExecute(0, "open", "http://10.0.0.48:8080", NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(0, "open", serverIPAddress.c_str(), NULL, NULL, SW_SHOWNORMAL);
 
     std::thread thread_obj(backgroundClipboardUpdater, username, deviceID);
 

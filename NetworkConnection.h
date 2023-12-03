@@ -12,7 +12,7 @@
 
 class NetworkConnection {
 private:
-    static const std::string IP;
+    static std::string IP;
 
     httplib::Client *client;
 public:
@@ -21,9 +21,12 @@ public:
         client = new httplib::Client(IP);
     }
 
+    static void setIP (std::string serverIP);
+
     void postData(const std::string &url, const nlohmann::json &jsonData);
     nlohmann::json getData(const std::string &url);
 };
+
 
 
 #endif //WINDOWSCLIENTTEST1_NETWORKCONNECTION_H

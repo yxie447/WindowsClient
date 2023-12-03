@@ -1,10 +1,10 @@
-//
-// Created by jarboer on 2023-11-28.
-//
-
 #include "NetworkConnection.h"
 
-const std::string NetworkConnection::IP = "http://10.0.0.48:4800"; // http://0.0.0.0:48000
+std::string NetworkConnection::IP = "";
+
+void NetworkConnection::setIP(std::string serverIP) {
+    IP = serverIP;
+}
 
 // Make a POST request to the server to send data
 // TODO: Wrap in try catch? Here or in call...
