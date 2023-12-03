@@ -16,13 +16,19 @@ void NetworkConnection::postData(const std::string &url, const nlohmann::json &j
 
     auto postRes = client->Post(url, headers, jsonData.dump(), "application/json");
 
-    if (postRes && postRes->status == 200) {
+    if (postRes.error() == httplib::Error::Connection) { // If the server has no connection
+        std::cerr << "POST: Unable to reach server " << std::endl;
+
+        return;
+    }
+
+    std::cout << std::endl << "postRes: " << postRes << std::endl;
+
+    if (postRes) {
         std::cout << std::endl << "POST: " << std::endl;
 
         std::cout << "Status: " << postRes->status << std::endl;
         std::cout << "Body: " << postRes->body << std::endl;
-    } else { // If the server has no connection
-        std::cout << "POST: Unable to reach server " << std::endl; // TODO: Make less generic as it catches any different status
     }
 }
 
@@ -32,6 +38,20 @@ nlohmann::json NetworkConnection::getData(const std::string &url) {
     auto getRes = client->Get(url);
 
     std::string contentType;
+    nlohmann::json responseData;
+
+    // If there is a connection error return early
+    if (getRes.error() == httplib::Error::Connection) {
+        responseData["status"] = 504; // Connection timeout
+
+        return responseData;
+    } else if (!getRes) {
+        std::cerr << "The get response is bad" << std::endl;
+
+        responseData["status"] = 504; // Connection timeout
+
+        return responseData;
+    }
 
     for (const auto& header : getRes->headers) {
         if (header.first == "Content-Type") {
@@ -40,9 +60,7 @@ nlohmann::json NetworkConnection::getData(const std::string &url) {
         }
     }
 
-    nlohmann::json responseData;
-
-    if (getRes && !getRes->body.empty()) {
+    if (!getRes->body.empty()) {
         responseData["status"] = getRes->status;
 
         if (!contentType.empty()) {
