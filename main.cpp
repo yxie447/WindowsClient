@@ -17,26 +17,27 @@ void backgroundClipboardUpdater(const std::string &username, const std::string &
 std::string getClipboardFromSever(NetworkConnection *conn, const std::string &username);
 
 int main() {
-    std::string serverIPAddress = "";
+    std::string serverIPAddress;
+    std::string apiServerIPAddress;
 
     bool flag = true;
 
-    while (flag){
-        std::cout << "Please Input Server IP(ipv4) Address:" << std::endl;
+    auto ipPattern = std::regex("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$");
+    auto hostNamePattern = std::regex("^[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*\\.local$");
+
+    while (flag) {
+        std::cout << "Please input the server IP (ipv4) address:" << std::endl;
         std::cin >> serverIPAddress;
 
-        if (std::regex_match(serverIPAddress, std::regex("^(?:[0-9]{1,3}\\.){3}[0-9]{1,3}$"))){
+        if (std::regex_match(serverIPAddress, ipPattern) || std::regex_match(serverIPAddress,hostNamePattern)) {
             flag = false;
         } else {
-            std::cout << "Please Input a Valid IP(ipv4) Address." << std::endl;
+            std::cout << "Sorry that isn't a valid IP (ipv4) address." << std::endl;
         }
     }
 
-    std::string apiServerIPAddress = serverIPAddress;
-
+    apiServerIPAddress = "http://" + serverIPAddress + ":4800";
     serverIPAddress = "http://" + serverIPAddress + ":8080";
-
-    apiServerIPAddress = "http://" + apiServerIPAddress + ":4800";
 
     NetworkConnection::setIP(apiServerIPAddress);
 
@@ -44,7 +45,7 @@ int main() {
     std::string username = "Benz"; // admin
     std::string deviceID = "1";
 
-    ShellExecute(0, "open", serverIPAddress.c_str(), NULL, NULL, SW_SHOWNORMAL);
+    ShellExecute(nullptr, "open", serverIPAddress.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
 
     std::thread thread_obj(backgroundClipboardUpdater, username, deviceID);
 
